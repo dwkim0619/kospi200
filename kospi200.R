@@ -51,3 +51,5 @@ kospi200 <- readRDS('kospi200.rds')
 kospi200 %>%
   select(Code, Date, Adjusted) %>%
   head()
+
+
