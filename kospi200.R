@@ -24,25 +24,30 @@ for (i in 1:20) {
 
 kospi200_code_list <- unlist(kospi200_code_list)
 
-GetDataFrame <- function(code) {
+getDataTable <- function(code) {
   code <- paste0(code, ".KS")
   
-  df <- getSymbols(Symbols=code, 
+  dt <- getSymbols(Symbols=code, 
                    src = "yahoo", 
                    from = "2020-01-01", 
                    to = "2020-03-31", auto.assign = F)
-  df <- as.data.table(df)
-  df$Code <- code
-  colnames(df) <- c("Date", "Open", "High", "Low", "Close", "Volume", "Adjusted", "Code")
+  dt <- as.data.table(dt)
+  dt$Code <- code
+  colnames(dt) <- c("Date", "Open", "High", "Low", "Close", "Volume", "Adjusted", "Code")
   
-  df
+  dt
 }
 
-df <- GetDataFrame(kospi200_code_list[1])
+dt <- getDataTable(kospi200_code_list[1])
 for (code in kospi200_code_list[2:200]) {
   print(code)
-  df1 <- GetDataFrame(code)
-  df <- rbind(df, df1)  
+  dt1 <- getDataTable(code)
+  dt <- rbind(dt, dt1)  
 }
-saveRDS(df, 'd:/temp/kospi200.rds')
-kospi200
+saveRDS(dt, 'kospi200.rds')
+
+kospi200 <- readRDS('kospi200.rds')
+
+kospi200 %>%
+  select(Code, Date, Adjusted) %>%
+  head()
