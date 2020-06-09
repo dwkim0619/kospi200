@@ -4,6 +4,7 @@ library(tidyverse)
 library(xts)
 library(dplyr)
 library(data.table)
+library(quantmod)
 
 kospi200_code_list <- list()
 
@@ -50,6 +51,20 @@ kospi200 <- readRDS('kospi200.rds')
 
 kospi200 %>%
   select(Code, Date, Adjusted) %>%
-  head()
+  group_by(Code) %>%
+  mutate(Returns = ROC(Adjusted)) -> kospi200_returns
 
+saveRDS(kospi200_returns, 'kospi200_returns.rds')
+
+kospi200_returns <- readRDS('kospi200_returns.rds')
+kospi200_returns <- na.omit(kospi200_returns)
+
+kospi200_returns %>%
+  select(Date, Code, Returns) %>%
+  spread(Code, Returns) -> kospi200_returns2
+
+
+kospi200_returns2[,1]
+
+plot(kospi200_returns2[,2:10])
 
